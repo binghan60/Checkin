@@ -43,9 +43,9 @@ async function handleEvent(event) {
     if (event.type === 'postback') {
         const data = event.postback.data;
         console.log(data);
-        if (data === 'clock_in_out') {
+        if (data === '打卡') {
             return handleClockInOut(event);
-        } else if (data === 'view_records') {
+        } else if (data === '查看加班紀錄') {
             return handleViewRecords(event);
         }
     }
@@ -195,7 +195,7 @@ async function createRichMenu(customConfig = {}) {
                 },
                 action: {
                     type: 'postback',
-                    data: 'clock_in_out',
+                    // data: 'clock_in_out',
                     label: '打卡',
                 },
             },
@@ -208,7 +208,7 @@ async function createRichMenu(customConfig = {}) {
                 },
                 action: {
                     type: 'postback',
-                    data: 'view_records',
+                    // data: 'view_records',
                     label: '查看加班紀錄',
                 },
             },
