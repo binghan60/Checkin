@@ -2,7 +2,7 @@ const Record = require('../models/record');
 const dateUtil = require('../utils/dateUtil');
 
 const STANDARD_HOURS = 8; // 標準工時
-const HOURLY_RATE = 150; // 假設時薪為 150 元
+const HOURLY_RATE = 188; // 假設時薪為 150 元
 
 async function clockInOut(userId) {
     const now = new Date();
@@ -19,10 +19,6 @@ async function clockInOut(userId) {
 
     if (isClockIn) {
         // 上班打卡
-        if (record && record.clockInTime) {
-            return { success: false, message: '今天已經打過上班卡了！' };
-        }
-
         if (!record) {
             record = new Record({
                 userId,
@@ -30,21 +26,21 @@ async function clockInOut(userId) {
             });
         }
 
-        record.clockInTime = now;
+        record.clockInTime = now; // 設定上班打卡時間
         await record.save();
 
         return { success: true, message: `上班打卡成功！時間：${dateUtil.formatTime(now)}` };
     } else {
         // 下班打卡
-        if (!record || !record.clockInTime) {
-            return { success: false, message: '請先打上班卡！' };
+        if (!record) {
+            return { success: false, message: '無法下班打卡，今天沒有上班記錄。' };
         }
 
-        if (record.clockOutTime) {
-            return { success: false, message: '今天已經打過下班卡了！' };
+        if (!record.clockInTime) {
+            return { success: false, message: '資料不足，無法計算工作時數，請聯繫管理員處理。' };
         }
 
-        record.clockOutTime = now;
+        record.clockOutTime = now; // 設定下班打卡時間
 
         // 計算工作時數
         const workHours = (now - record.clockInTime) / (1000 * 60 * 60);
